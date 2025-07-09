@@ -1,0 +1,20 @@
+.category-page { padding: 20px; max-width: 600px; margin: auto; }
+.category-form { display: grid; gap: 10px; margin-bottom: 20px; }
+.category-list { list-style: none; padding: 0; margin-top: 20px; }
+.category-card {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+.category-card button { margin-left: 8px; }
+ 
+#ButEdit {
+  background-color: #ff9800;
+}
+
+#ButExcluir {
+  background-color: #f44336;
+}
