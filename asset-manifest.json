@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/rrodrigues88/feria2.git/static/css/main.bf54535e.css",
-    "main.js": "/rrodrigues88/feria2.git/static/js/main.8e5da42d.js",
-    "index.html": "/rrodrigues88/feria2.git/index.html",
-    "main.bf54535e.css.map": "/rrodrigues88/feria2.git/static/css/main.bf54535e.css.map",
-    "main.8e5da42d.js.map": "/rrodrigues88/feria2.git/static/js/main.8e5da42d.js.map"
+    "main.css": "/feria2/static/css/main.bf54535e.css",
+    "main.js": "/feria2/static/js/main.8e5da42d.js",
+    "index.html": "/feria2/index.html",
+    "main.bf54535e.css.map": "/feria2/static/css/main.bf54535e.css.map",
+    "main.8e5da42d.js.map": "/feria2/static/js/main.8e5da42d.js.map"
   },
   "entrypoints": [
     "static/css/main.bf54535e.css",
