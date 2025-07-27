@@ -2,7 +2,7 @@
   "name": "feira-crud",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/rrodrigues88/feria2.git",
+  "homepage": "https://rrodrigues88.github.io/feria2/",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
