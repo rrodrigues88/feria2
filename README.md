@@ -20,7 +20,7 @@ API e aplicação web completa para gerenciamento de feira livre com funcionalid
 ### ✅ Feirantes
 - Gerenciamento de feirantes, incluindo formulário de cadastro e listagem.
 ![Feirante 1](./prints/crud_feirante_1.png)
-![Feirante 2](./prints/crud_feirante_2.png)
+![Feirante 2](./prints/crud-feirante-2.png)
 ![Feirante 3](./prints/crud_feirante_3.png)
 
 ### ✅ Produtos
@@ -35,7 +35,7 @@ API e aplicação web completa para gerenciamento de feira livre com funcionalid
 
 ### ✅ Swagger
 - Documentação completa da API com suporte aos métodos GET, POST, PUT, DELETE.
-![Swagger](./prints/swagger.png)
+![Swagger](./prints/teste.png)
 
 ### ✅ Docker
 - Aplicação publicada com sucesso no Docker rodando na porta 8080.
