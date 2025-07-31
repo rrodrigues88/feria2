@@ -1,50 +1,99 @@
-<<<<<<< HEAD
-# feria2
-=======
-# Getting Started with Create React App
+# FeiraAPI 🎯
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+API e aplicação web completa para gerenciamento de feira livre com funcionalidades de CRUD para **Feirantes**, **Categorias**, **Produtos** e **Vendas**. Backend construído com ASP.NET 8 + Entity Framework e frontend com React + TypeScript. Integração e deploy local via Docker.
 
-## Available Scripts
+## 🔧 Tecnologias Utilizadas
 
-In the project directory, you can run:
+- ASP.NET 8 (Web API)
+- Entity Framework Core
+- PostgreSQL (via string de conexão)
+- React.js + TypeScript
+- Docker
+- Swagger para documentação de API
 
-### `npm start`
+## 📸 Funcionalidades e Prints
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### ✅ Categorias
+- Cadastro, edição e exclusão de categorias.
+![Categorias](./prints/category_crud.png)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### ✅ Feirantes
+- Gerenciamento de feirantes, incluindo formulário de cadastro e listagem.
+![Feirante 1](./prints/crud_feirante_1.png)
+![Feirante 2](./prints/crud_feirante_2.png)
+![Feirante 3](./prints/crud_feirante_3.png)
 
-### `npm test`
+### ✅ Produtos
+- Cadastro com vínculo a feirante e categoria.
+- Edição e exclusão também disponíveis.
+![Produtos](./prints/product_crud.png)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### ✅ Vendas
+- Cadastro de vendas com validação de estoque.
+- Histórico de vendas.
+![Vendas](./prints/sale_crud.png)
 
-### `npm run build`
+### ✅ Swagger
+- Documentação completa da API com suporte aos métodos GET, POST, PUT, DELETE.
+![Swagger](./prints/swagger.png)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### ✅ Docker
+- Aplicação publicada com sucesso no Docker rodando na porta 8080.
+![Docker Rodando](./prints/docker_print_MD.png)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### ✅ Integração Frontend e Backend
+- Frontend React consumindo APIs .NET com CORS liberado e endpoints funcionando corretamente.
+![Integração VSCode](./prints/Integrando_print_vscode.png)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🚀 Como Executar
 
-### `npm run eject`
+### 1. Clone o repositório
+```bash
+git clone https://github.com/seu-usuario/feira-crud.git
+cd feira-crud
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 2. Backend via Docker
+#### ✅ Build da imagem
+```bash
+docker build -t feira-api .
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### ▶️ Executar o container
+```bash
+docker run -p 8080:80 --name feira-prod feira-api
+```
+Acesse o Swagger via: [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### 3. Frontend (React)
+#### 📦 Instale dependências
+```bash
+npm install
+```
+#### ▶️ Inicie o app
+```bash
+npm run dev
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+npm start
+```
+Acesse: [http://localhost:3000](http://localhost:3000)
 
-## Learn More
+## ✅ Requisitos Atendidos
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- [x] CRUD de Categoria
+- [x] CRUD de Feirante
+- [x] CRUD de Produto (com vínculos)
+- [x] CRUD de Venda com controle de estoque
+- [x] Consumo de API REST via React
+- [x] Deploy local com Docker
+- [x] Documentação Swagger gerada automaticamente
 
-To learn React, check out the [React documentation](https://reactjs.org/).
->>>>>>> 6ed862a (Initialize project using Create React App)
+## 👤 Autor
+
+**Rodolfo Rodrigues**  
+Curso: Ciência da Computação - UFC  
+Disciplina: Desenvolvimento Web - 2025
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT.
