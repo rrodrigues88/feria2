@@ -49,13 +49,17 @@ API e aplicação web completa para gerenciamento de feira livre com funcionalid
 
 ### 1. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/feira-crud.git
-cd feira-crud
+git clone https://github.com/rrodrigues88/feria2.git
+cd feira2
 ```
 
 ### 2. Backend via Docker
 #### ✅ Build da imagem
 ```bash
+
+git clone https://github.com/rrodrigues88/feira_api.git
+cd feira_api
+
 docker build -t feira-api .
 ```
 
