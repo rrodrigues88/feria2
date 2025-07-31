@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Feirante } from "../types";
-import { carregar, salvar } from "../services/storage";
+import { feiranteService } from "../services/api";
 import FeiranteForm from "../components/FeiranteForm";
 import "../styles/FeirantePage.css";
-
-const STORAGE_KEY = "feirantes";
 
 const FeirantePage: React.FC = () => {
   const [feirantes, setFeirantes] = useState<Feirante[]>([]);
@@ -12,27 +10,30 @@ const FeirantePage: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    setFeirantes(carregar<Feirante>(STORAGE_KEY));
+    const loadFeirantes = async () => {
+      const data = await feiranteService.getAll();
+      setFeirantes(data);
+    };
+    loadFeirantes();
   }, []);
 
-  const persist = (data: Feirante[]) => {
-    setFeirantes(data);
-    salvar(STORAGE_KEY, data);
-  };
-
-  const handleSave = (feirante: Feirante) => {
-    const atualizado = editing
-      ? feirantes.map((f) => (f.id === feirante.id ? feirante : f))
-      : [...feirantes, feirante];
-
-    persist(atualizado);
+  const handleSave = async (feirante: Feirante) => {
+    if (editing) {
+      await feiranteService.update(feirante.id, feirante);
+    } else {
+      await feiranteService.create(feirante);
+    }
+    const updated = await feiranteService.getAll();
+    setFeirantes(updated);
     setEditing(null);
     setShowForm(false);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm("Deseja realmente excluir este feirante?")) {
-      persist(feirantes.filter((f) => f.id !== id));
+      await feiranteService.delete(id);
+      const updated = await feiranteService.getAll();
+      setFeirantes(updated);
     }
   };
 
@@ -72,15 +73,13 @@ const FeirantePage: React.FC = () => {
               <td>{f.nome}</td>
               <td>{f.contato}</td>
               <td>
-                <button id="ButEdit"
-                  onClick={() => {
-                    setEditing(f);
-                    setShowForm(true);
-                  }}
-                >
+                <button onClick={() => {
+                  setEditing(f);
+                  setShowForm(true);
+                }}>
                   Editar
-                </button>{" "}
-                <button id="ButExcluir" onClick={() => handleDelete(f.id)}>Excluir</button>
+                </button>
+                <button onClick={() => handleDelete(f.id)}>Excluir</button>
               </td>
             </tr>
           ))}

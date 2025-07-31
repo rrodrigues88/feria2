@@ -1,50 +1,58 @@
 import React, { useEffect, useState } from "react";
 import { Produto, Feirante, Categoria } from "../types";
-import { carregar, salvar } from "../services/storage";
+import { produtoService, feiranteService, categoriaService } from "../services/api";
 import ProductForm from "../components/ProductForm";
 import "../styles/ProductPage.css";
 
-const STORAGE_KEY = "produtos";
-const STORAGE_FEIRANTES = "feirantes";
-const STORAGE_CATEGORIAS = "categorias";
-
 const ProductPage: React.FC = () => {
   const [produtos, setProdutos] = useState<Produto[]>([]);
-  const [editing, setEditing] = useState<Produto | null>(null);
-  const [showForm, setShowForm] = useState(false);
   const [feirantes, setFeirantes] = useState<Feirante[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] = useState<Produto | null>(null);
 
   useEffect(() => {
-    setProdutos(carregar<Produto>(STORAGE_KEY));
-    setFeirantes(carregar<Feirante>(STORAGE_FEIRANTES));
-    setCategorias(carregar<Categoria>(STORAGE_CATEGORIAS));
+    const loadData = async () => {
+      try {
+        const [prodData, feiranteData, categoriaData] = await Promise.all([
+          produtoService.getAll(),
+          feiranteService.getAll(),
+          categoriaService.getAll()
+        ]);
+        setProdutos(prodData);
+        setFeirantes(feiranteData);
+        setCategorias(categoriaData);
+      } catch (err) {
+        console.error("Erro ao carregar dados:", err);
+      }
+    };
+    loadData();
   }, []);
 
-  const persist = (data: Produto[]) => {
-    setProdutos(data);
-    salvar(STORAGE_KEY, data);
-  };
-
-  const handleSave = (p: Produto) => {
-    const atualizado = editing
-      ? produtos.map((prod) => (prod.id === p.id ? p : prod))
-      : [...produtos, p];
-
-    persist(atualizado);
+  const handleSave = async (produto: Produto) => {
+    if (editing) {
+      await produtoService.update(produto.id, produto);
+    } else {
+      await produtoService.create(produto);
+    }
+    const updatedData = await produtoService.getAll();
+    setProdutos(updatedData);
     setEditing(null);
     setShowForm(false);
   };
 
-  const handleDelete = (id: string) => {
-    persist(produtos.filter((p) => p.id !== id));
+  const handleEdit = (produto: Produto) => {
+    setEditing(produto);
+    setShowForm(true);
   };
 
-  const nomeFeirante = (id: string) =>
-    feirantes.find((f) => f.id === id)?.nome ?? "—";
-
-  const nomeCategoria = (id: string) =>
-    categorias.find((c) => c.id === id)?.nome ?? "—";
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Deseja excluir este produto?")) {
+      await produtoService.delete(id);
+      const updatedData = await produtoService.getAll();
+      setProdutos(updatedData);
+    }
+  };
 
   return (
     <div className="product-page">
@@ -57,8 +65,8 @@ const ProductPage: React.FC = () => {
           categorias={categorias}
           onSave={handleSave}
           onCancel={() => {
-            setShowForm(false);
             setEditing(null);
+            setShowForm(false);
           }}
         />
       ) : (
@@ -77,31 +85,25 @@ const ProductPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {produtos.length === 0 && (
+          {produtos.length === 0 ? (
             <tr>
               <td colSpan={6}>Nenhum produto cadastrado.</td>
             </tr>
+          ) : (
+            produtos.map((p) => (
+              <tr key={p.id}>
+                <td>{p.nome}</td>
+                <td>R$ {p.preco.toFixed(2)}</td>
+                <td>{p.quantidade}</td>
+                <td>{feirantes.find(f => f.id === p.feiranteId)?.nome ?? "—"}</td>
+                <td>{categorias.find(c => c.id === p.categoriaId)?.nome ?? "—"}</td>
+                <td>
+                  <button onClick={() => handleEdit(p)}>Editar</button>
+                  <button onClick={() => handleDelete(p.id)}>Excluir</button>
+                </td>
+              </tr>
+            ))
           )}
-          {produtos.map((p) => (
-            <tr key={p.id}>
-              <td>{p.nome}</td>
-              <td>R$ {p.preco.toFixed(2)}</td>
-              <td>{p.quantidade}</td>
-              <td>{nomeFeirante(p.feiranteId)}</td>
-              <td>{nomeCategoria(p.categoriaId)}</td>
-              <td>
-                <button
-                  onClick={() => {
-                    setEditing(p);
-                    setShowForm(true);
-                  }}
-                >
-                  Editar
-                </button>{" "}
-                <button onClick={() => handleDelete(p.id)}>Excluir</button>
-              </td>
-            </tr>
-          ))}
         </tbody>
       </table>
     </div>

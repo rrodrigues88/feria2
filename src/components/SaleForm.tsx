@@ -1,95 +1,132 @@
-import React, { useEffect, useState, FormEvent } from "react";
-import { Venda, Produto } from "../types";
-import { carregar } from "../services/storage";
+import React, { useEffect, useState } from 'react';
+import { Produto, CreateVendaDTO } from '../types';
+import { produtoService, vendaService } from '../services/api';
 
-type Props = {
-  initialData?: Partial<Venda>;
-  onSave: (v: Venda) => void;
+interface SaleFormProps {
+  initialData?: Partial<CreateVendaDTO>;
+  onSave: (venda: CreateVendaDTO) => void;
   onCancel: () => void;
-};
+}
 
-const STORAGE_PRODUTOS = "produtos";
-
-const SaleForm: React.FC<Props> = ({ initialData, onSave, onCancel }) => {
-  const [produtoId, setProdutoId] = useState(initialData?.produtoId ?? "");
-  const [quantidade, setQuantidade] = useState(initialData?.quantidade ?? 1);
+const SaleForm: React.FC<SaleFormProps> = ({ initialData, onSave, onCancel }) => {
+  const [produtoId, setProdutoId] = useState<string>(initialData?.produtoId || '');
+  const [quantidade, setQuantidade] = useState<number>(initialData?.quantidade || 1);
   const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setProdutos(carregar<Produto>(STORAGE_PRODUTOS));
-  }, []);
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
-    const produtoSelecionado = produtos.find((p) => p.id === produtoId);
-    if (!produtoSelecionado) {
-      alert("Produto inválido.");
-      return;
-    }
-
-    if (quantidade > produtoSelecionado.quantidade) {
-      alert(`Quantidade solicitada maior que o estoque disponível (${produtoSelecionado.quantidade}).`);
-      return;
-    }
-
-    const novaVenda: Venda = {
-      id: initialData?.id ?? crypto.randomUUID(),
-      produtoId,
-      quantidade,
-      data: initialData?.data ?? new Date().toISOString(),
-      feiranteId: produtoSelecionado.feiranteId,
+    const loadProdutos = async () => {
+      try {
+        setLoading(true);
+        const data = await produtoService.getAll();
+        setProdutos(data);
+      } catch (err) {
+        setError('Falha ao carregar produtos');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    onSave(novaVenda);
+    loadProdutos();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const produtoSelecionado = produtos.find(p => p.id === produtoId);
+      
+      if (!produtoSelecionado) {
+        throw new Error('Selecione um produto válido');
+      }
+
+      if (quantidade <= 0) {
+        throw new Error('Quantidade deve ser maior que zero');
+      }
+
+      if (quantidade > produtoSelecionado.quantidade) {
+        throw new Error(`Estoque insuficiente (disponível: ${produtoSelecionado.quantidade})`);
+      }
+
+      const vendaData: CreateVendaDTO = {
+        produtoId,
+        quantidade,
+        feiranteId: produtoSelecionado.feiranteId,
+        data: new Date().toISOString()
+      };
+
+      onSave(vendaData);
+
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading && produtos.length === 0) {
+    return <div className="loading">Carregando produtos...</div>;
+  }
 
   return (
     <form onSubmit={handleSubmit} className="sale-form">
+      {error && <div className="error-message">{error}</div>}
+
       <div className="form-group">
-        <label>Produto</label>
+        <label htmlFor="produto">Produto</label>
         <select
+          id="produto"
           value={produtoId}
           onChange={(e) => setProdutoId(e.target.value)}
           required
+          disabled={loading || produtos.length === 0}
         >
-          <option value="">-- selecione --</option>
-          {produtos.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.nome}
+          <option value="">Selecione um produto</option>
+          {produtos.map((produto) => (
+            <option 
+              key={produto.id} 
+              value={produto.id}
+              disabled={produto.quantidade <= 0}
+            >
+              {produto.nome} ({produto.quantidade} disponíveis)
             </option>
           ))}
         </select>
-        {produtos.length === 0 && (
-          <small>Nenhum produto cadastrado ainda.</small>
-        )}
       </div>
 
-      {produtoId && (
-        <p>
-          Estoque disponível:{" "}
-          <strong>
-            {produtos.find((p) => p.id === produtoId)?.quantidade ?? 0}
-          </strong>
-        </p>
-      )}
-
       <div className="form-group">
-        <label>Quantidade</label>
+        <label htmlFor="quantidade">Quantidade</label>
         <input
+          id="quantidade"
           type="number"
-          min={1}
+          min="1"
+          max={produtos.find(p => p.id === produtoId)?.quantidade || 1}
           value={quantidade}
-          onChange={(e) => setQuantidade(parseInt(e.target.value))}
+          onChange={(e) => setQuantidade(Number(e.target.value))}
           required
+          disabled={!produtoId || loading}
         />
       </div>
 
       <div className="form-actions">
-        <button type="submit">
-          {initialData?.id ? "Salvar" : "Registrar Venda"}
+        <button 
+          type="submit" 
+          disabled={loading}
+          className="submit-button"
+        >
+          {loading ? 'Processando...' : 'Confirmar Venda'}
         </button>
-        <button type="button" onClick={onCancel}>
+        
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={loading}
+          className="cancel-button"
+        >
           Cancelar
         </button>
       </div>

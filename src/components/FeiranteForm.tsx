@@ -1,5 +1,6 @@
 import React, { FormEvent, useState } from "react";
 import { Feirante } from "../types";
+import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   initialData?: Feirante;
@@ -18,7 +19,7 @@ const FeiranteForm: React.FC<Props> = ({
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const novo: Feirante = {
-      id: initialData?.id ?? crypto.randomUUID(),
+      id: initialData?.id ?? uuidv4(),
       nome,
       contato
     };

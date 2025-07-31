@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Produto, Feirante, Categoria } from "../types";
+import { v4 as uuidv4 } from "uuid";
 
 interface ProductFormProps {
   initialData?: Produto;
@@ -36,7 +37,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
     e.preventDefault();
 
     const data: Produto = {
-      id: initialData?.id ?? crypto.randomUUID(),
+      id: initialData?.id ?? uuidv4(),
       nome,
       preco: parseFloat(preco),
       quantidade: parseInt(quantidade),
